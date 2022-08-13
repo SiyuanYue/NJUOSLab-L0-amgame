@@ -7,6 +7,6 @@ a.out-*
 *-32*
 *-64*
 *.pdf
-./libco
-./kernel
+libco/
+kernel/
 thread-os.c
