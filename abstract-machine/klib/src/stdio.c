@@ -22,7 +22,7 @@ int printf(const char *fmt, ...)
     int ret_num = 0;
     char *pStr = (char *)fmt; // 指向str
     int ArgIntVal = 0;        // 接收整型
-    // unsigned long ArgHexVal = 0;// 接十六进制
+    unsigned long ArgHexVal = 0;// 接十六进制
     char *ArgStrVal = NULL; // 接收字符型
     // double ArgFloVal = 0.0; // 接受浮点型
     unsigned long val_seg = 0; // 数据切分
@@ -60,6 +60,65 @@ int printf(const char *fmt, ...)
                 putch((char)ArgIntVal);
                 pStr++;
                 ret_num++;
+                break;
+            case 'x':
+                // 接收16进制
+                ArgHexVal = va_arg(pArgs, unsigned long);
+                val_seg = ArgHexVal;
+                // 计算ArgIntVal长度
+                if (ArgHexVal)
+                {
+                    while (val_seg)
+                    {
+                        cnt++;
+                        val_seg /= 16;
+                    }
+                }
+                else
+                    cnt = 1; // 数字0的长度为1
+
+                ret_num += cnt; // 字符个数加上整数的长度
+                // 将整数转为单个字符打印
+                while (cnt)
+                {
+                    val_seg = ArgHexVal / m_pow_n(16, cnt - 1);
+                    ArgHexVal %= m_pow_n(16, cnt - 1);
+                    if (val_seg <= 9)
+                       putch((char)val_seg + '0');
+                    else
+                    {
+                        putch((char)val_seg - 10 + 'A');
+                    }
+                    cnt--;
+                }
+                pStr++;
+                break;
+            case 'b':
+                // 接收整型
+                ArgIntVal = va_arg(pArgs, int);
+                val_seg = ArgIntVal;
+                // 计算ArgIntVal长度
+                if (ArgIntVal)
+                {
+                    while (val_seg)
+                    {
+                        cnt++;
+                        val_seg /= 2;
+                    }
+                }
+                else
+                    cnt = 1; // 数字0的长度为1
+
+                ret_num += cnt; // 字符个数加上整数的长度
+                // 将整数转为单个字符打印
+                while (cnt)
+                {
+                    val_seg = ArgIntVal / m_pow_n(2, cnt - 1);
+                    ArgIntVal %= m_pow_n(2, cnt - 1);
+                    putch((char)val_seg + '0');
+                    cnt--;
+                }
+                pStr++;
                 break;
             case 'd':
                 ArgIntVal = va_arg(pArgs, int);
@@ -128,9 +187,9 @@ int vsprintf(char *out, const char *fmt, va_list ap)
     // double ArgFloVal = 0.0; // 接受浮点型
     unsigned long val_seg = 0; // 数据切分
     // unsigned long val_temp = 0;  // 临时保存数据
-    int cnt = 0;          // 数据长度计数
+    int cnt = 0; // 数据长度计数
     char *str_out = out;
-    for (; *pStr!='\0'; pStr++)
+    for (; *pStr != '\0'; pStr++)
     {
         switch (*pStr)
         {
@@ -180,7 +239,7 @@ int vsprintf(char *out, const char *fmt, va_list ap)
             case 's':
                 ArgStrVal = va_arg(ap, char *);
                 ret_num += strlen(ArgStrVal);
-                for (; *ArgStrVal!='\0'; ArgStrVal++)
+                for (; *ArgStrVal != '\0'; ArgStrVal++)
                 {
                     *str_out++ = *ArgStrVal;
                 }
@@ -196,21 +255,21 @@ int vsprintf(char *out, const char *fmt, va_list ap)
         }
     }
     *str_out = '\0';
-    assert(ret_num=strlen(out));
+    assert(ret_num = strlen(out));
     return ret_num;
 }
 int sprintf(char *out, const char *fmt, ...)
 {
-    va_list pArgs; 
-    va_start(pArgs,fmt);
-    return vsprintf(out,fmt,pArgs);
+    va_list pArgs;
+    va_start(pArgs, fmt);
+    return vsprintf(out, fmt, pArgs);
 }
 
 int snprintf(char *out, size_t n, const char *fmt, ...)
 {
-    va_list pArgs; 
-    va_start(pArgs,fmt);
-    return vsnprintf(out,n,fmt,pArgs);
+    va_list pArgs;
+    va_start(pArgs, fmt);
+    return vsnprintf(out, n, fmt, pArgs);
 }
 
 int vsnprintf(char *out, size_t n, const char *fmt, va_list ap)
@@ -225,9 +284,9 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap)
     // double ArgFloVal = 0.0; // 接受浮点型
     unsigned long val_seg = 0; // 数据切分
     // unsigned long val_temp = 0;  // 临时保存数据
-    int cnt = 0;          // 数据长度计数
+    int cnt = 0; // 数据长度计数
     char *str_out = out;
-    for (; *pStr!='\0'; pStr++)
+    for (; *pStr != '\0'; pStr++)
     {
         switch (*pStr)
         {
@@ -236,7 +295,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap)
             switch (*pStr)
             {
             case '%':
-                if(ret_num+1>n)
+                if (ret_num + 1 > n)
                     return ret_num;
                 *str_out++ = *pStr;
                 ret_num++;
@@ -246,7 +305,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap)
                 if (ArgIntVal < 0) // 如果为负数打印，负号
                 {
                     ArgIntVal = -ArgIntVal; // 取相反数
-                    if(ret_num+1>n)
+                    if (ret_num + 1 > n)
                         return ret_num;
                     *str_out++ = '-';
                     ret_num++;
@@ -262,13 +321,13 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap)
                     }
                 }
                 else
-                    cnt = 1;    // 数字0的长度为1
+                    cnt = 1; // 数字0的长度为1
                 // 将整数转为单个字符打印
                 while (cnt)
                 {
                     val_seg = ArgIntVal / m_pow_n(10, cnt - 1);
                     ArgIntVal %= m_pow_n(10, cnt - 1);
-                    if(ret_num+1>n)
+                    if (ret_num + 1 > n)
                         return ret_num;
                     *str_out++ = (char)val_seg + '0';
                     ret_num++;
@@ -277,16 +336,16 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap)
                 break;
             case 'c':
                 ArgIntVal = va_arg(ap, int);
-                 if(ret_num+1>n)
+                if (ret_num + 1 > n)
                     return ret_num;
                 *str_out++ = (char)ArgIntVal;
                 ret_num++;
                 break;
             case 's':
                 ArgStrVal = va_arg(ap, char *);
-                for (; *ArgStrVal!='\0'; ArgStrVal++)
+                for (; *ArgStrVal != '\0'; ArgStrVal++)
                 {
-                    if(ret_num+1>n)
+                    if (ret_num + 1 > n)
                         return ret_num;
                     *str_out++ = *ArgStrVal;
                     ret_num++;
@@ -297,7 +356,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap)
             }
             break;
         default:
-            if(ret_num+1>n)
+            if (ret_num + 1 > n)
                 return ret_num;
             *str_out++ = *pStr;
             ret_num++;
@@ -305,8 +364,8 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap)
         }
     }
     *str_out = '\0';
-    assert(ret_num=strlen(out));
-    assert(ret_num<=n);
+    assert(ret_num = strlen(out));
+    assert(ret_num <= n);
     return ret_num;
 }
 

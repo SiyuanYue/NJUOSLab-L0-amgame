@@ -116,13 +116,9 @@ int strncmp(const char *s1, const char *s2, size_t n)
 
 void *memset(void *s, int c, size_t n)
 {
-	const unsigned char uc = c;
-	unsigned char *str=(unsigned char *)s; 
-	panic_on(sizeof(str)<=n,"n is larger than the size of s");
-	size_t cnt=0;
-	for(;cnt<=n;cnt++)
+	for(size_t cnt=0;cnt<n;cnt++)
 	{
-		*str++=uc;
+		((char *)s)[cnt]=c;
 	}
 	return s;
 }
