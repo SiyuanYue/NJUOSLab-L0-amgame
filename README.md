@@ -16,9 +16,9 @@
 
 	根据写好的`./abstact-machine/Makefile` 进行编译与运行，
 	编译：在你要运行的那个项目下，本实验是amgame目录下使用`make`命令即可
-	![[Pasted image 20220813231330.png]]
+	[![Pasted-image-20220813231330.png](https://i.postimg.cc/prznmY1P/Pasted-image-20220813231330.png)](https://postimg.cc/QKNMP53z)
 	运行：在你要运行的那个项目下，本实验是amgame目录下使用`make run`命令
-	![[Pasted image 20220813231446.png]]
+	[![Pasted-image-20220813231446.png](https://i.postimg.cc/7hdmkVJD/Pasted-image-20220813231446.png)](https://postimg.cc/Fkbjb0xn)
 	如果想要可读性更好的阅读`abstact-machine/`目录下`Makefile`文件? 后来根据一节课上JYY讲授内容： 使用`make html`命令即可，其实是非常巧妙的将makefile文件通过正则匹配转换成了可读性强的markdown文件，然后生成了直接阅读的html。
 	更多相关编译选项可看： [操作系统的状态机模型 (操作系统的加载; thread-os 代码讲解) [南京大学2022操作系统-P9]_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1yP4y1M7FE/?spm_id_from=333.788&vd_source=33d3156975c92d1beb9e11e8b218f8b0)
 2. 实现 `printf`
@@ -27,9 +27,10 @@
 	但之后就会面临问题，我们先来看printf函数声明：
 	`int printf(const char *fmt, ...)`
 	`...`的可变参数中的内容要如何获取，我STFW，但发现要引入`stdarg.h`中的` va_list` , `va_start()`等，一开始觉得不行，以为`Bare-Metal`下编程不能引入其他的库文件，后来发现自己看文档没看到后面的内容。。。
-	>
-	  事实上，AbstractMachine 的程序运行在 [freestanding 的环境下](https://wiki.osdev.org/C_Library) (操作系统上的 C 程序运行在 hosted 环境下)：The `__STDC_HOSTED__` macro expands to `1` on hosted implementations, or 0 on freestanding ones. The freestanding headers are: `float.h`, `iso646.h`, `limits.h`, `stdalign.h`, `stdarg.h`, `stdbool.h`, `stddef.h`, `stdint.h`, and `stdnoreturn.h`. You should be familiar with these headers as they contain useful declarations you shouldn't do yourself. GCC also comes with additional freestanding headers for CPUID, SSE and such.
-     这些头文件中包含了 freestanding 程序也可使用的声明。有兴趣的同学可以发现，可变参数经过预编译后生成了类似 `__builtin_va_arg` 的 builtin 调用，由编译器翻译成了特定的汇编代码。
+
+	>  事实上，AbstractMachine 的程序运行在 [freestanding 的环境下](https://wiki.osdev.org/C_Library) (操作系统上的 C 程序运行在 hosted 环境下)：The `__STDC_HOSTED__` macro expands to `1` on hosted implementations, or 0 on freestanding ones. The freestanding headers are: `float.h`, `iso646.h`, `limits.h`, `stdalign.h`, `stdarg.h`, `stdbool.h`, `stddef.h`, `stdint.h`, and `stdnoreturn.h`. You should be familiar with these headers as they contain useful declarations you shouldn't do yourself. GCC also comes with additional freestanding headers for CPUID, SSE and such.
+
+    > 这些头文件中包含了 freestanding 程序也可使用的声明。有兴趣的同学可以发现，可变参数经过预编译后生成了类似 `__builtin_va_arg` 的 builtin 调用，由编译器翻译成了特定的汇编代码。
 
 	解决了`...`中的参数，之后呢？
 	%d , %c , %s 分别如何实现。到这里已经能说明对于`fmt`中的文字我们要逐个字符判断，遇到`%` 之类的格式输出还要细分，因此整体采用switch形式的结构。
@@ -83,12 +84,12 @@
 	这个造成了一些困扰还有坐标和宽度以及坐标与宽度相乘等等对应关系需要去琢磨以及一些边界上-1等小细节还是很费时间和心态的。。。。
 	还有帧率的挑选，一开始选的很高，结果画面很抽，弄了很久才知道是帧率的锅。。。。
 5. 一些优秀的blogs(前面已经提到大部分)：
+
 	 a. [L0: 直接运行在硬件上的小游戏 (amgame) (jyywiki.cn)](http://jyywiki.cn/OS/2022/labs/L0) jyy的实验手册真的写的很好，膜拜，请**仔细**阅读，还有`AbstractMachine`文档（[AbstractMachine: 抽象计算机 (jyywiki.cn)](http://jyywiki.cn/AbstractMachine/)。
-	 ##### RTFM！！！！！！
-	 b. 配置Abstract-Machine实验环境  [JYY操作系统实验L0 实验基础配置方案 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/499141891)   我是在linux虚拟机中做的，感觉比wsl好用些，但很多东西可以作为参考哈。
+	 **RTFM！！！！！！**\
+	 b. 配置Abstract-Machine实验环境  [JYY操作系统实验L0 实验基础配置方案 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/499141891)   我是在linux虚拟机中做的，感觉比wsl好用些，但很多东西可以作为参考哈。\
 	 c.  printf实现讲解   [(31条消息) 手把手教你实现printf函数（C语言方式）_老子姓李！的博客-CSDN博客_printf 实现](https://blog.csdn.net/qq_44078824/article/details/118440458?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522165815957216782350863814%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=165815957216782350863814&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-2-118440458-null-null.142^v32^new_blog_fixed_pos,185^v2^tag_show&utm_term=printf%E5%AE%9E%E7%8E%B0&spm=1018.2226.3001.4187)
-
-
+	 后话:其实xv6的printf代码会更好
 
 
 
